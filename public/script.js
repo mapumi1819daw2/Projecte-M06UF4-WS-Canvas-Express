@@ -16,7 +16,7 @@ function obtenirCoordenades(canvas, evt) {
     var x = evt.clientX - rect.left;
     var y = evt.clientY - rect.top;
     //console.log("x: " + x + " y: " + y);
-console.log(pressed);
+    console.log(pressed);
         if(pressed){
             ctx.lineTo(x + 1, y + 1);
         }
@@ -30,7 +30,7 @@ console.log(pressed);
     
 }
 
-
+/* Funció que canvia entre estat pressionat i no pressionat */
 function canviEstat(){
     pressed = !pressed;
     
@@ -43,7 +43,7 @@ function canviEstat(){
 
 }
 
-
+/* FUnció inicial que crea el listener per captar el moviment del ratolí */
 function inici() {
     if (canvas.getContext) {
         ctx = canvas.getContext('2d');   
