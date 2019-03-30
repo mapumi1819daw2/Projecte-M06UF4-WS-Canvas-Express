@@ -69,6 +69,21 @@ console.log("Listening on port " + port);
 /* Socket */
 
 io.sockets.on('connection', function(socket){
+
+    //Escoltem, coordenades
+    socket.on("coordenadesInici", function(data){
+        console.log("coordenadesInici", JSON.stringify(data));
+        socket.emit('coordenadaServidorInici', data); 
+        socket.broadcast.emit("coordenadesInici", data);
+    });
+
+
+    socket.on("coordenadesFi", function(data){
+        console.log("coordenadesFi", JSON.stringify(data));
+        socket.emit('coordenadaServidorFi', data); 
+        socket.broadcast.emit("coordenadaServidorFi", data);
+    });
+
     //Enviem
     socket.emit('[Servidor envia]', {
                  missatge: "Holaa"

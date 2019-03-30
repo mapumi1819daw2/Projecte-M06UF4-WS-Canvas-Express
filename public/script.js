@@ -2,12 +2,13 @@ var pressed = false;
 var ctx = null;
 
 var pos = {
-    x : null,
-    y : null,
+    x: null,
+    y: null,
 };
 
-/* Web Sockets */
+var nomJugador = null;
 
+/* Web Sockets */
 var missatges = [];
 var socket = null;
 
@@ -28,27 +29,38 @@ function obtenirCoordenades(canvas, evt) {
     var y = evt.clientY - rect.top;
     //console.log("x: " + x + " y: " + y);
     console.log(pressed);
-        if(pressed){
-            ctx.lineTo(x + 1, y + 1);
-        }
-        else{
-            pos.x = evt.clientX;
-            pos.y = evt.clientY;
-        }
-        
-        ctx.stroke(); //finalitza i dibuixa
-   
-    
+    if (pressed) {
+        ctx.lineTo(x + 1, y + 1);
+
+        /* Enviem les coordenades del moviment */
+        socket.emit("coordenadesFi", {
+            nom: nomJugador,
+            coordX: x,
+            coordY: y
+        });
+    } else {
+        pos.x = evt.clientX;
+        pos.y = evt.clientY;
+    }
+
+    ctx.stroke(); //finalitza i dibuixa
+
+
 }
 
 /* Funció que canvia entre estat pressionat i no pressionat */
-function canviEstat(){
+function canviEstat() {
     pressed = !pressed;
-    
-    if(pressed){
+
+    if (pressed) {
+        socket.emit("coordenadesInici", {
+            nom: nomJugador,
+            coordIniX: pos.x,
+            coordIniY: pos.y
+        });
         ctx.moveTo(pos.x, pos.y);
     }
-    console.log("pressed "+ pressed);
+    console.log("pressed " + pressed);
 
 
 
@@ -58,18 +70,17 @@ function canviEstat(){
 function inici() {
 
     canvas.addEventListener("mousedown", canviEstat);
-   
+
     if (canvas.getContext) {
-        ctx = canvas.getContext('2d');   
+        ctx = canvas.getContext('2d');
     }
     ctx.beginPath();
-    canvas.addEventListener("mousedown mouseup", function mouseState(e){
-        if(e.type == "mousedown"){
+    canvas.addEventListener("mousedown mouseup", function mouseState(e) {
+        if (e.type == "mousedown") {
             console.log("clicat");
         }
     });
-    canvas.addEventListener('mousemove', function
-        (evt) {
+    canvas.addEventListener('mousemove', function (evt) {
         obtenirCoordenades(document.getElementById('canvas'), evt);
     }, false);
 
@@ -78,7 +89,8 @@ function inici() {
 }
 
 
-function inicialitzaVariables(){
+function inicialitzaVariables() {
+    nomJugador = document.getElementById("nom").innerText;
 
     socket = io.connect("http://localhost:8888");
     contingut = document.getElementById("contingut");
@@ -87,7 +99,7 @@ function inicialitzaVariables(){
 }
 
 
-function  inicialitzaWebSocket(){
+function inicialitzaWebSocket() {
 
     /* Escoltar */
     escoltarWS();
@@ -96,40 +108,53 @@ function  inicialitzaWebSocket(){
 
 }
 
-function escoltarWS(){
-    socket.on("NouMissatge", function (data){
-            if(data.missatge){
+function escoltarWS() {
+    socket.on("NouMissatge", function (data) {
+        if (data.missatge) {
 
-                console.log(data.missatge);
-                missatges.push(data.missatge);
+            console.log(data.missatge);
+            missatges.push(data.missatge);
 
-                var html = '';
-                for(var i=0; i<missatges.length; i++) {
-                    html += missatges[i] + '<br />';
-                }
-
-                contingut.innerHTML = html;
+            var html = '';
+            for (var i = 0; i < missatges.length; i++) {
+                html += "En " + data.nom + " diu: " + missatges[i] + '<br />';
             }
 
-            else{
-                console.log("Error amb el missatge rebut");
-            }
-        });
+            contingut.innerHTML = html;
+        } else {
+            console.log("Error amb el missatge rebut");
+        }
+    });
+
+
+    socket.on("coordenadaServidorInici", function (data) {
+        ctx.moveTo(data.coordIniX, data.coordIniYs);
+    });
+
+
+
+    socket.on("coordenadaServidorFi", function (data) {
+        ctx.lineTo(data.coordX, data.coordY);
+        ctx.stroke(); //finalitza i dibuixa
+
+    });
 }
 
 
-function enviarWS(){
+function enviarWS() {
 
-    var nomJugador = document.getElementById("nom").innerText;
 
-   /*  console.log("nom "+nom); */
+    /*  console.log("nom "+nom); */
 
-    botoEnviar.onclick = function (){
-       // pressed = !pressed;
+    botoEnviar.onclick = function () {
+        // pressed = !pressed;
         var m = textEnviar.value;
 
-   
-    socket.emit("clientEnvia", {nom:nomJugador, missatge: m});
+
+        socket.emit("clientEnvia", {
+            nom: nomJugador,
+            missatge: m
+        });
     };
-    
+
 }
