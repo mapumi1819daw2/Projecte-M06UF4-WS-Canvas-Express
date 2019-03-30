@@ -18,9 +18,13 @@ $(function(){
                 /* Revem el canvas.jade */
 
                 /* Substitum html */
+               // alert(data);
+                
                var login = document.open("texthtml", "replace");
                login.write(data);
                login.close();
+
+
 
                 
                 

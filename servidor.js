@@ -6,10 +6,10 @@ var partides = [];
 
 
 class Partida {
-    constructor(id, Jugadors){
+    constructor(id){
         this.id = id; 
-        this.Jugadors = Jugadors;
-        this.quantJugadors = this.Jugadors.length;
+        this.jugadors = [];
+        this.quantJugadors = this.jugadors.length;
         this.maxJugadors = 4;
     }
 
@@ -25,7 +25,19 @@ class Jugador {
 
 
 function assignaPartida(nom){
-    
+
+    var numPartides = partides.length;
+
+    /* Cap partida */
+    if(numPartides == 0){
+        jugador = new Jugador(nom, 0, 0);
+        novaPartida = new Partida(numPartides+1);
+        novaPartida.jugadors.push(jugador);
+        partides.push(novaPartida);
+
+        console.log(partides[0]);
+        
+    }
 }
 
 app.use(express.static(__dirname + '/public'));
@@ -47,7 +59,7 @@ app.get("/jugar/:nom", function (req, res){
     var nom = req.params.nom;
     console.log("nom "+nom);
     assignaPartida(nom);
-    res.render("canvas");
+    res.render("canvas", {"jugador" : nom});
 });
 
 var io = require('socket.io').listen(app.listen(port));
@@ -55,15 +67,19 @@ console.log("Listening on port " + port);
 
 
 /* Socket */
+
 io.sockets.on('connection', function(socket){
     //Enviem
     socket.emit('[Servidor envia]', {
                  missatge: "Holaa"
                 });
 
-    //Escoltem
-    socket.on('envia', function(data){
-        io.sockets.emit('missatge', data);
+    //Escoltem missatges
+    socket.on('clientEnvia', function(data){
+        console.log("Rebo "+JSON.stringify(data));
+        
+        socket.emit('NouMissatge', data); //Responem a qui ha enviat
+        socket.broadcast.emit("NouMissatge", data); //A la resta
     });
    
 })
