@@ -8,6 +8,11 @@ var pos = {
 
 var nomJugador = null;
 
+/* Llista de jugadors */
+var llistaJugadors = [];
+
+var pinto = false;
+
 /* Web Sockets */
 var missatges = [];
 var socket = null;
@@ -69,6 +74,8 @@ function canviEstat() {
 /* FUnció inicial que crea el listener per captar el moviment del ratolí */
 function inici() {
 
+
+
     canvas.addEventListener("mousedown", canviEstat);
 
     if (canvas.getContext) {
@@ -80,13 +87,21 @@ function inici() {
             console.log("clicat");
         }
     });
-    canvas.addEventListener('mousemove', function (evt) {
-        obtenirCoordenades(document.getElementById('canvas'), evt);
-    }, false);
+
+    if (pinto) {
+        canvas.addEventListener('mousemove', function (evt) {
+            obtenirCoordenades(document.getElementById('canvas'), evt);
+        }, false);
+    }
+
 
     inicialitzaVariables();
+    demanaInfoInicial();
     inicialitzaWebSocket();
 }
+
+
+
 
 
 function inicialitzaVariables() {
@@ -98,6 +113,76 @@ function inicialitzaVariables() {
     botoEnviar = document.getElementById("enviar");
 }
 
+
+function demanaInfoInicial() {
+
+    socket.emit("infoInicial", {
+        nom: nomJugador,
+    });
+
+
+    socket.on("infoInicial", function (data) {
+        console.log(JSON.stringify(data));
+
+        if (data.pinta) {
+            document.getElementById("encert").removeAttribute("hidden");
+            pinto = true;
+
+            encert.addEventListener("click", function (){
+                for(var i =0; i <llistaJugadors.length; i++){
+                    if(document.getElementById(llistaJugadors[i]).checked){
+                        console.log(" clic "+llistaJugadors[i]);
+
+                        alert("Be "+llistaJugadors[i]);
+                    }
+                }
+            });
+
+            canvas.addEventListener('mousemove', function (evt) {
+                obtenirCoordenades(document.getElementById('canvas'), evt);
+            }, false);
+
+
+            /* Demanem la llista de jugadors */
+            socket.emit("jugadors", {
+                codi: data.codiPartida
+            });
+
+            socket.on("jugadors", function (data) {
+                console.log(JSON.stringify(data));
+                dibuixaInputsJugadors(data);
+            });
+
+
+
+
+        } else {
+            pinto = false;
+        }
+    });
+
+
+}
+
+
+/* Funció que mostra la llista dels jugadors que participen */
+function dibuixaInputsJugadors(data) {
+
+
+    var html = '';
+
+    var t = data.jugadors.length;
+   
+        if(nomJugador !=data.jugadors[t-1].nom){
+            llistaJugadors.push(data.jugadors[t-1].nom);
+            html += '<input id="'+data.jugadors[t-1].nom+ '" type="radio" value="'+data.jugadors[t-1].nom+'">'+data.jugadors[t-1].nom;
+        }
+
+        
+    jugadors.innerHTML += html;
+
+
+}
 
 function inicialitzaWebSocket() {
 
@@ -121,6 +206,10 @@ function escoltarWS() {
             }
 
             contingut.innerHTML = html;
+
+
+
+
         } else {
             console.log("Error amb el missatge rebut");
         }

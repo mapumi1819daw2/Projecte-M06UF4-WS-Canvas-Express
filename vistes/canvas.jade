@@ -7,15 +7,22 @@ head
      script(src="script.js")
      script(src='/socket.io/socket.io.js')
      
-body 
+body#cos
      <!-- jugador es una variable que la rep del segon parametre del render-->
      h2#nom= jugador 
 
  canvas#canvas(width="500" height="500")(style="border: 2px solid blueviolet;")
 
 
-#contingut(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;')
-.controls
+p#contingut(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;')
+
 input#entrada(style='width:350px;')
 
 button#enviar Enviar	
+
+br
+br
+
+form#jugadors(action="encert()")
+
+button#encert Encert!
