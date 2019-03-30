@@ -1,0 +1,22 @@
+html
+
+head
+
+    title= "Login"
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+    script(src="login.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js")
+
+body 
+
+    div#divLogin
+        h3(style="position: relative; left: 40%; padding-top:5%;") Login
+
+        form(style="position: relative; left: 40%; padding-top:10%;")
+            
+                label Nom d'usuari
+                br
+                input#nom(type="text" placeholder="Usuari")
+                br
+                br
+                button#login(type="submit") Login
