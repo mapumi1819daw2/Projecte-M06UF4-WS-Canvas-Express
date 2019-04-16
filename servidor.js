@@ -29,6 +29,7 @@ class Jugador {
 function assignaPartida(nom) {
 
     var numPartides = partides.length;
+    var limitJugadors = 2;
 
     /* Cap partida */
     if (numPartides == 0) {
@@ -44,17 +45,17 @@ function assignaPartida(nom) {
         var lliure = true;
         for (var i = 0; i < numPartides; i++) {
 
-            if (partides[i].jugadors.length == 4) {
+            if (partides[i].jugadors.length+1 == limitJugadors) {
                 lliure = false;
 
                 console.log("Partida plena");
             }
             /* Si la partida no arriba a 4 jugadors */
-            if (partides[i].jugadors.length < 4) {
+            if (partides[i].jugadors.length+1 < limitJugadors) {
                 lliure = true;
                 console.log("Partida lliure");
                 jugador = new Jugador(nom, 0, 0);
-                jugador.codiPartida = numPartides;
+                jugador.codiPartida = numPartides-1;
                 partides[i].jugadors.push(jugador);
             }
         }
@@ -63,7 +64,7 @@ function assignaPartida(nom) {
             console.log("nova Partida lliure");
             jugador = new Jugador(nom, 0, 0);
             jugador.pinta = true;
-            jugador.codiPartida = numPartides;
+            jugador.codiPartida = numPartides-1;
             novaPartida = new Partida(numPartides);
             novaPartida.jugadors.push(jugador);
             partides.push(novaPartida);

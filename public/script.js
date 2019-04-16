@@ -122,6 +122,7 @@ function demanaInfoInicial() {
 
 
     socket.on("infoInicial", function (data) {
+        console.warn("infoInicial");
         console.log(JSON.stringify(data));
 
         if (data.pinta) {
@@ -149,7 +150,7 @@ function demanaInfoInicial() {
             });
 
             socket.on("jugadors", function (data) {
-                console.log(JSON.stringify(data));
+               // console.log(JSON.stringify(data));
                 dibuixaInputsJugadors(data);
             });
 
