@@ -45,13 +45,13 @@ function assignaPartida(nom) {
         var lliure = true;
         for (var i = 0; i < numPartides; i++) {
 
-            if (partides[i].jugadors.length+1 == limitJugadors) {
+            if (partides[i].jugadors.length == limitJugadors) {
                 lliure = false;
 
                 console.log("Partida plena");
             }
             /* Si la partida no arriba a 4 jugadors */
-            if (partides[i].jugadors.length+1 < limitJugadors) {
+            if (partides[i].jugadors.length < limitJugadors) {
                 lliure = true;
                 console.log("Partida lliure");
                 jugador = new Jugador(nom, 0, 0);
@@ -65,7 +65,7 @@ function assignaPartida(nom) {
             jugador = new Jugador(nom, 0, 0);
             jugador.pinta = true;
             jugador.codiPartida = numPartides-1;
-            novaPartida = new Partida(numPartides);
+            novaPartida = new Partida(numPartides-1);
             novaPartida.jugadors.push(jugador);
             partides.push(novaPartida);
 
@@ -141,6 +141,7 @@ io.sockets.on('connection', function (socket) {
 
     /* El que pinta demana la llista de jugadors */
     socket.on("jugadors", function (data) {
+        console.warn("Jugadors");
         console.log(JSON.stringify(data));
         socket.emit("jugadors", {"jugadors": partides[data.codi].jugadors});
     });
