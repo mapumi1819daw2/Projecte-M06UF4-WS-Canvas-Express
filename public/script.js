@@ -7,6 +7,8 @@ var pos = {
 };
 
 var nomJugador = null;
+var numSala = null;
+var sala = null;
 
 /* Llista de jugadors */
 var llistaJugadors = [];
@@ -106,6 +108,8 @@ function inici() {
 
 function inicialitzaVariables() {
     nomJugador = document.getElementById("nom").innerText;
+    sala = document.getElementById("sala");
+
 
     socket = io.connect("http://localhost:8888");
     contingut = document.getElementById("contingut");
@@ -122,6 +126,9 @@ function demanaInfoInicial() {
 
 
     socket.on("infoInicial", function (data) {
+        console.warn("Info inicial");
+        numSala = data.codiPartida;
+        sala.innerText= "Sala: "+ numSala;
         console.log(JSON.stringify(data));
 
         if (data.pinta) {
