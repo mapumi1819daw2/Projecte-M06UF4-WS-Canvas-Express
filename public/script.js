@@ -6,14 +6,12 @@ var pos = {
     y: null,
 };
 
+
+
 var nomJugador = null;
-<<<<<<< HEAD
 var numSala = null;
 var sala = null;
-=======
-var titolSala = null;
-var numSala = 0;
->>>>>>> 0bcc67aa91983948c5bae3ac56395268abad4388
+
 
 /* Llista de jugadors */
 var llistaJugadors = [];
@@ -47,6 +45,7 @@ function obtenirCoordenades(canvas, evt) {
         /* Enviem les coordenades del moviment */
         socket.emit("coordenadesFi", {
             nom: nomJugador,
+            codi: numSala,
             coordX: x,
             coordY: y
         });
@@ -67,6 +66,7 @@ function canviEstat() {
     if (pressed) {
         socket.emit("coordenadesInici", {
             nom: nomJugador,
+            codi: numSala,
             coordIniX: pos.x,
             coordIniY: pos.y
         });
@@ -113,12 +113,8 @@ function inici() {
 
 function inicialitzaVariables() {
     nomJugador = document.getElementById("nom").innerText;
-<<<<<<< HEAD
     sala = document.getElementById("sala");
 
-=======
-    titolSala = document.getElementById("sala");
->>>>>>> 0bcc67aa91983948c5bae3ac56395268abad4388
 
     socket = io.connect("http://localhost:8888");
     contingut = document.getElementById("contingut");
@@ -137,7 +133,7 @@ function demanaInfoInicial() {
     socket.on("infoInicial", function (data) {
         console.warn("Info inicial");
         numSala = data.codiPartida;
-        sala.innerText= "Sala: "+ numSala;
+        sala.innerText = "Sala: " + numSala;
         console.log(JSON.stringify(data));
 
         /* Indiquem sala i nom del jugador */
@@ -145,11 +141,11 @@ function demanaInfoInicial() {
 
         numSala = data.codiPartida;
 
-        console.log("Sala ABANS "+ numSala);
-        titolSala.innerText = "Sala: "+ numSala;
+        console.log("Sala ABANS " + numSala);
+        sala.innerText = "Sala: " + numSala;
 
-        console.log("Sala DCESPRES "+ numSala);
-        nomJugador = " Jugador: "+ nomJugador;
+        console.log("Sala DCESPRES " + numSala);
+        nomJugador = " Jugador: " + nomJugador;
 
         document.getElementById("nom").innerText = nomJugador;
 
@@ -158,19 +154,19 @@ function demanaInfoInicial() {
             pinto = true;
 
 
-        /* 
-        ** 
-        **  JUGADOR HA ENCERTAT EL DIBUIX
-        **
-        **
-        
-        */
-            encert.addEventListener("click", function (){
-                for(var i =0; i <llistaJugadors.length; i++){
-                    if(document.getElementById(llistaJugadors[i]).checked){
-                        console.log(" clic "+llistaJugadors[i]);
+            /* 
+            ** 
+            **  JUGADOR HA ENCERTAT EL DIBUIX
+            **
+            **
+            
+            */
+            encert.addEventListener("click", function () {
+                for (var i = 0; i < llistaJugadors.length; i++) {
+                    if (document.getElementById(llistaJugadors[i]).checked) {
+                        console.log(" clic " + llistaJugadors[i]);
 
-                        alert("Be "+llistaJugadors[i]);
+                        alert("Be " + llistaJugadors[i]);
                     }
                 }
             });
@@ -179,14 +175,14 @@ function demanaInfoInicial() {
                 obtenirCoordenades(document.getElementById('canvas'), evt);
             }, false);
 
-            console.log("Sala pre "+ numSala);
+            console.log("Sala pre " + numSala);
             /* Demanem la llista de jugadors */
             socket.emit("jugadors", {
                 codi: numSala
             });
 
             socket.on("jugadors", function (data) {
-               // console.log(JSON.stringify(data));
+                // console.log(JSON.stringify(data));
                 dibuixaInputsJugadors(data);
             });
 
@@ -209,13 +205,13 @@ function dibuixaInputsJugadors(data) {
     var html = '';
 
     var t = data.jugadors.length;
-   
-        if(nomJugador !=data.jugadors[t-1].nom){
-            llistaJugadors.push(data.jugadors[t-1].nom);
-            html += '<input id="'+data.jugadors[t-1].nom+ '" type="radio" value="'+data.jugadors[t-1].nom+'">'+data.jugadors[t-1].nom;
-        }
 
-        
+    if (nomJugador != data.jugadors[t - 1].nom) {
+        llistaJugadors.push(data.jugadors[t - 1].nom);
+        html += '<input id="' + data.jugadors[t - 1].nom + '" type="radio" value="' + data.jugadors[t - 1].nom + '">' + data.jugadors[t - 1].nom;
+    }
+
+
     jugadors.innerHTML += html;
 
 
@@ -254,15 +250,19 @@ function escoltarWS() {
 
 
     socket.on("coordenadaServidorInici", function (data) {
-        ctx.moveTo(data.coordIniX, data.coordIniYs);
+        if (data.codi == numSala) {
+            ctx.moveTo(data.coordIniX, data.coordIniYs);
+        }
+
     });
 
 
 
     socket.on("coordenadaServidorFi", function (data) {
-        ctx.lineTo(data.coordX, data.coordY);
-        ctx.stroke(); //finalitza i dibuixa
-
+        if (data.codi == numSala) {
+            ctx.lineTo(data.coordX, data.coordY);
+            ctx.stroke(); //finalitza i dibuixa
+        }
     });
 }
 
