@@ -29,7 +29,11 @@ class Jugador {
 function assignaPartida(nom) {
 
     var numPartides = partides.length;
+<<<<<<< HEAD
     var numJugadors = 2;
+=======
+    var limitJugadors = 2;
+>>>>>>> 0bcc67aa91983948c5bae3ac56395268abad4388
 
     /* Cap partida */
     if (numPartides == 0) {
@@ -64,8 +68,8 @@ function assignaPartida(nom) {
             console.log("nova Partida lliure");
             jugador = new Jugador(nom, 0, 0);
             jugador.pinta = true;
-            jugador.codiPartida = numPartides;
-            novaPartida = new Partida(numPartides);
+            jugador.codiPartida = numPartides-1;
+            novaPartida = new Partida(numPartides-1);
             novaPartida.jugadors.push(jugador);
             partides.push(novaPartida);
 
@@ -141,6 +145,7 @@ io.sockets.on('connection', function (socket) {
 
     /* El que pinta demana la llista de jugadors */
     socket.on("jugadors", function (data) {
+        console.warn("Jugadors");
         console.log(JSON.stringify(data));
         socket.emit("jugadors", {"jugadors": partides[data.codi].jugadors});
     });

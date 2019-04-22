@@ -7,8 +7,13 @@ var pos = {
 };
 
 var nomJugador = null;
+<<<<<<< HEAD
 var numSala = null;
 var sala = null;
+=======
+var titolSala = null;
+var numSala = 0;
+>>>>>>> 0bcc67aa91983948c5bae3ac56395268abad4388
 
 /* Llista de jugadors */
 var llistaJugadors = [];
@@ -108,8 +113,12 @@ function inici() {
 
 function inicialitzaVariables() {
     nomJugador = document.getElementById("nom").innerText;
+<<<<<<< HEAD
     sala = document.getElementById("sala");
 
+=======
+    titolSala = document.getElementById("sala");
+>>>>>>> 0bcc67aa91983948c5bae3ac56395268abad4388
 
     socket = io.connect("http://localhost:8888");
     contingut = document.getElementById("contingut");
@@ -131,10 +140,31 @@ function demanaInfoInicial() {
         sala.innerText= "Sala: "+ numSala;
         console.log(JSON.stringify(data));
 
+        /* Indiquem sala i nom del jugador */
+        console.log(nomJugador);
+
+        numSala = data.codiPartida;
+
+        console.log("Sala ABANS "+ numSala);
+        titolSala.innerText = "Sala: "+ numSala;
+
+        console.log("Sala DCESPRES "+ numSala);
+        nomJugador = " Jugador: "+ nomJugador;
+
+        document.getElementById("nom").innerText = nomJugador;
+
         if (data.pinta) {
             document.getElementById("encert").removeAttribute("hidden");
             pinto = true;
 
+
+        /* 
+        ** 
+        **  JUGADOR HA ENCERTAT EL DIBUIX
+        **
+        **
+        
+        */
             encert.addEventListener("click", function (){
                 for(var i =0; i <llistaJugadors.length; i++){
                     if(document.getElementById(llistaJugadors[i]).checked){
@@ -149,14 +179,14 @@ function demanaInfoInicial() {
                 obtenirCoordenades(document.getElementById('canvas'), evt);
             }, false);
 
-
+            console.log("Sala pre "+ numSala);
             /* Demanem la llista de jugadors */
             socket.emit("jugadors", {
-                codi: data.codiPartida
+                codi: numSala
             });
 
             socket.on("jugadors", function (data) {
-                console.log(JSON.stringify(data));
+               // console.log(JSON.stringify(data));
                 dibuixaInputsJugadors(data);
             });
 
