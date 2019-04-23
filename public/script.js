@@ -127,6 +127,7 @@ function demanaInfoInicial() {
 
     socket.emit("infoInicial", {
         nom: nomJugador,
+        codi : numSala,
     });
 
 
@@ -182,8 +183,17 @@ function demanaInfoInicial() {
             });
 
             socket.on("jugadors", function (data) {
-                // console.log(JSON.stringify(data));
-                dibuixaInputsJugadors(data);
+                console.warn("Jugadors");
+                console.log("Num sala: "+ numSala);
+
+                console.log(JSON.stringify(data.jugadors[numSala].jugadors));
+                if(data.jugadors.length>1){
+                    console.log("in");
+                    console.log(JSON.stringify(data.jugadors[1]));
+                    console.log(JSON.stringify(data.jugadors[numSala].jugadors));
+                    dibuixaInputsJugadors(data);
+                }
+                 
             });
 
 

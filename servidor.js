@@ -143,7 +143,7 @@ io.sockets.on('connection', function (socket) {
     socket.on("jugadors", function (data) {
         console.warn("Jugadors");
         console.log(JSON.stringify(data));
-        socket.emit("jugadors", {"jugadors": partides[data.codi].jugadors});
+        socket.emit("jugadors", {"jugadors": partides});
     });
 
     //Escoltem, coordenades
